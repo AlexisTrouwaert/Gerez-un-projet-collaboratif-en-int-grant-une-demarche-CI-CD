@@ -7,7 +7,25 @@ on:
     branches: [ "main" ]
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          backend:
+            - 'back/**'
+          frontend:
+            - 'front/**'
+
   build-and-test-backend:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -29,6 +47,8 @@ jobs:
         path: back/target/site/jacoco/jacoco.xml
 
   build-and-test-frontend:
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -52,7 +72,10 @@ jobs:
   sonarcloud:
     name: SonarCloud Scan
     runs-on: ubuntu-latest
-    needs: [build-and-test-backend, build-and-test-frontend]
+    needs: [changes, build-and-test-backend, build-and-test-frontend]
+    if: >
+      (needs.build-and-test-backend.result != 'failure' && needs.build-and-test-frontend.result != 'failure') &&
+      (needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true')
     steps:
       - uses: actions/checkout@v4
         with:
@@ -66,10 +89,12 @@ jobs:
       - name: Compile Java backend
         run: mvn -B -f back/pom.xml compile
       - name: Download Jacoco report
+        if: needs.changes.outputs.backend == 'true'
         uses: actions/download-artifact@v4
         with:
           name: jacoco-xml-report
       - name: Download LCOV report
+        if: needs.changes.outputs.frontend == 'true'
         uses: actions/download-artifact@v4
         with:
           name: lcov-report
