@@ -22,4 +22,5 @@ public class JokeController {
         return ResponseEntity.ok(this.jokeService.getRandomJoke());
     }
 
+
 }
