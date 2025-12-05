@@ -62,14 +62,7 @@ Pour garantir une qualité de code maintenable et évolutive, je propose de suiv
 
 Après la première exécution complète de la pipeline, voici les métriques initiales remontées par SonarCloud.
 
-*(Note : Veuillez remplacer les valeurs `[VALEUR_ACTUELLE]` par celles que vous avez obtenues dans votre rapport SonarCloud et vos logs de pipeline).*
 
-*   **Taux de Couverture (Coverage) :**
-    *   Back-end : `[VALEUR_ACTUELLE]%`
-    *   Front-end : `[VALEUR_ACTUELLE]%`
-*   **Bugs :** `[VALEUR_ACTUELLE]`
-*   **Vulnérabilités :** `[VALEUR_ACTUELLE]`
-*   **Dette Technique :** `[VALEUR_ACTUELLE]` jours
 
 ### Analyse des Retours Utilisateurs
 
